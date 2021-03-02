@@ -27,8 +27,14 @@ pdf(file = "dendrogram.pdf")
 hclustplot(hc.rd, k=3,cex=0.8)
 dev.off()
 
+## kmeans clustering for finding centers of each cluster
 sub_grp <- cutree(hc.rd, k = 3)
 table(sub_grp)
 library(factoextra)
-fviz_cluster(list(data = e, cluster = sub_grp), ellipse.type = "norm",cex=0.5,show.clust.cent = TRUE)
+fviz_cluster(list(data = e, cluster = sub_grp), geom = "point",ellipse.type = "norm",show.clust.cent = TRUE)
 km.res <- kmeans(e, 3, nstart = 10)
+
+### finding representative of each cluster
+library(FNN)
+y <- get.knnx(e, km.res$centers, 1)
+km.res$cluster[y$nn.index]
